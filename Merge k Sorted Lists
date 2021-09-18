@@ -1,0 +1,62 @@
+class Solution {
+    struct node{
+        ListNode *curr;
+        int index;
+        node(ListNode *a,int b)
+        {
+            curr=a;
+            index=b;
+        }
+    };
+    struct compare {
+    bool operator()(node a, node b)
+    {
+        return a.curr->val >b.curr->val;
+    }
+};
+public:
+   
+    ListNode* mergeKLists(vector<ListNode*>& lists) 
+    {
+        int k=lists.size();
+        if(k==0)
+            return nullptr;
+        ListNode *head=nullptr,*tail=nullptr;
+        
+        priority_queue<node,vector<node>,compare>pq;
+        vector<ListNode *> ptr(k);
+        
+        for(int i=0;i<k;i++)
+        {
+            ptr[i]=lists[i];
+            if(ptr[i]!=nullptr)
+                pq.push(node(ptr[i],i));
+        }
+        if(pq.empty()==true)
+            return nullptr;
+        
+        head=tail=pq.top().curr;
+        int index=pq.top().index;
+        pq.pop();
+        
+        ptr[index]=ptr[index]->next;
+        
+        if(ptr[index]!=nullptr)
+            pq.push(node(ptr[index],index));
+        
+        while(pq.empty()==false)
+        {
+            ListNode *temp=pq.top().curr;
+            index=pq.top().index;
+            pq.pop();
+            
+            tail->next=temp;
+            tail=tail->next;
+            ptr[index]=ptr[index]->next;
+            
+            if(ptr[index]!=nullptr)
+                pq.push(node(ptr[index],index));
+        }
+        return head;    
+    }
+    };
